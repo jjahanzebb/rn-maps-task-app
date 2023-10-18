@@ -11,37 +11,33 @@ import {
   ToastAndroid,
 } from "react-native";
 
+import * as Yup from "yup";
+import { Formik } from "formik";
+
 import colors from "../theme/colors";
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const validateLogin = async () => {
+  const validationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Enter a valid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password should be at least 6 characters")
+      .required("Password is required"),
+  });
+
+  const validateLogin = async (email, password) => {
     try {
       setLoading(true);
 
-      const emailRegex = new RegExp(
-        /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/,
-        "gm"
-      );
-      const isValidEmail = emailRegex.test(email);
-
-      // Simulate a successful login with provided email and password
-      if (!email || !password) {
-        ToastAndroid.show("Enter email and password", ToastAndroid.SHORT);
-      } else if (!isValidEmail) {
-        ToastAndroid.show("Enter a valid email address", ToastAndroid.SHORT);
-      } else if (password.length < 6) {
-        ToastAndroid.show(
-          "Password should be atleast 6 characters",
-          ToastAndroid.SHORT
-        );
-      } else if (email === "test@task.com" && password === "123456") {
+      // Simulate a successful login with dummy email and password
+      console.log(email, password);
+      if (email === "test@task.com" && password === "123456") {
         ToastAndroid.show("Login successful!", ToastAndroid.SHORT);
 
-        // Navigate to the desired screen after successful login
+        // Navigate map screen after successful login
         navigation.navigate("MapView");
       } else {
         ToastAndroid.show("Invalid Email or Password..", ToastAndroid.SHORT);
@@ -57,50 +53,73 @@ const LoginScreen = ({ navigation }) => {
     <View style={styles.mainContainer}>
       <StatusBar backgroundColor={colors.darkgray} barStyle={"light-content"} />
 
+      {/* Logo Image */}
       <Image
         source={require("../../assets/logo.png")}
         style={styles.logoImage}
       />
 
-      <>
-        <View style={[styles.inputContainer]}>
-          <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            cursorColor={colors.black}
-            autoCapitalize="none"
-            style={[styles.textInput]}
-          />
-        </View>
-      </>
+      {/* Form with validation */}
+      <Formik
+        initialValues={{ email: "", password: "" }}
+        validationSchema={validationSchema}
+        onSubmit={(values, action) =>
+          validateLogin(values.email, values.password)
+        }
+      >
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          touched,
+          errors,
+        }) => (
+          <>
+            <View style={[styles.inputContainer]}>
+              <TextInput
+                placeholder="Email"
+                value={values.email}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                cursorColor={colors.black}
+                autoCapitalize="none"
+                style={[styles.textInput]}
+              />
+            </View>
+            {touched.email && errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
 
-      <>
-        <View style={[styles.inputContainer]}>
-          <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            cursorColor={colors.black}
-            style={[styles.textInput]}
-            secureTextEntry={true}
-          />
-        </View>
-      </>
+            <View style={[styles.inputContainer]}>
+              <TextInput
+                placeholder="Password"
+                value={values.password}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                cursorColor={colors.black}
+                style={[styles.textInput]}
+                secureTextEntry={true}
+              />
+            </View>
+            {touched.password && errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
 
-      <>
-        <TouchableOpacity
-          onPress={() => validateLogin()}
-          style={styles.button}
-          activeOpacity={0.8}
-        >
-          {loading ? (
-            <ActivityIndicator color={colors.white} />
-          ) : (
-            <Text style={styles.buttonText}>Log In</Text>
-          )}
-        </TouchableOpacity>
-      </>
+            <TouchableOpacity
+              onPress={handleSubmit}
+              style={styles.button}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator color={colors.white} />
+              ) : (
+                <Text style={styles.buttonText}>Log In</Text>
+              )}
+            </TouchableOpacity>
+          </>
+        )}
+      </Formik>
     </View>
   );
 };
@@ -131,7 +150,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     borderRadius: 10,
-    marginBottom: 5,
+    marginBottom: 25,
+    marginTop: 15,
   },
   textInput: {
     height: "100%",
@@ -139,7 +159,12 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 16,
   },
-  seperatorLine: { height: 1, width: "50%", backgroundColor: colors.lightgray },
+  errorText: {
+    color: colors.red,
+    marginTop: -20,
+    width: "75%",
+    textAlign: "left",
+  },
 
   button: {
     width: "80%",

@@ -12,7 +12,7 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ title: "Map Task App", headerShown: false }}
-        initialRouteName="MapView"
+        initialRouteName="Login"
       >
         <Stack.Screen name="Login" component={LoginScreen} />
 
