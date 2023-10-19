@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Map Task App",
-    "slug": "Map Task App",
+    "slug": "MapTaskApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,21 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#111216"
+      },
+      "package": "com.obstask.maps",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCzgxzUV03uLpGnymWvGIYbFUnossuvvC8"
+        }
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "64687c85-d9f8-47a8-9df3-c8a8b93e4037"
+      }
     }
   }
 }

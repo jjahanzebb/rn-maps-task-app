@@ -13,7 +13,12 @@ import {
   ToastAndroid,
 } from "react-native";
 
-import MapView, { Polygon, Marker, Polyline } from "react-native-maps";
+import MapView, {
+  Polygon,
+  Marker,
+  Polyline,
+  PROVIDER_GOOGLE,
+} from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 
@@ -126,13 +131,12 @@ const MapViewScreen = () => {
 
       {/* Map on full screen */}
       <MapView
+        provider={PROVIDER_GOOGLE}
         style={styles.map}
         ref={mapRef}
         scrollEnabled={!isDrawing}
         minZoomLevel={15}
         maxZoomLevel={20}
-        zoomEnabled={true}
-        zoomTapEnabled={true}
         mapType={"satellite"}
         onPanDrag={(e) => {
           handlePanDraw(e);
